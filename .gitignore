@@ -1,0 +1,14 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+
+# local config (contains URLs/keys)
+config.json
+
+# vector DB and graph (generated, large binary)
+.chromadb/
+
+# generated visualizations
+visualizations/
