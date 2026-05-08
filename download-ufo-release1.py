@@ -6,7 +6,7 @@ Downloads 133 PDFs/images directly + 28 videos via DVIDS API.
 Usage:
     python3 download-ufo-release1.py [output_dir] [--jobs N]
 
-Defaults: output_dir=~/Downloads/UFO-Release-01, jobs=5
+Defaults: output_dir=<project>/data, jobs=5
 """
 
 import argparse
@@ -308,7 +308,7 @@ def main():
     parser.add_argument(
         "output_dir",
         nargs="?",
-        default=str(Path.home() / "Downloads" / "UFO-Release-01"),
+        default=str(Path(__file__).parent / "data"),
     )
     parser.add_argument("--jobs", type=int, default=5, help="parallel downloads")
     args = parser.parse_args()

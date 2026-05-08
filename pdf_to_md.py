@@ -11,8 +11,8 @@ Usage:
     python3 pdf_to_md.py [pdf_dir] [output_dir] [--jobs N]
 
 Defaults:
-    pdf_dir    = ~/Downloads/UFO-Release-01/pdfs
-    output_dir = ~/Downloads/UFO-Release-01/markdown
+    pdf_dir    = <project>/data/pdfs
+    output_dir = <project>/data/markdown
     jobs       = 4
 """
 
@@ -93,7 +93,7 @@ def convert_pdf(pdf_path: Path, out_dir: Path) -> tuple[str, str]:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    base = Path.home() / "Downloads" / "UFO-Release-01"
+    base = Path(__file__).parent / "data"
     parser.add_argument("pdf_dir",    nargs="?", default=str(base / "pdfs"))
     parser.add_argument("output_dir", nargs="?", default=str(base / "markdown"))
     parser.add_argument("--jobs", type=int, default=4)

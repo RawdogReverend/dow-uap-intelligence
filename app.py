@@ -19,8 +19,8 @@ except ImportError:
 
 ROOT       = Path(__file__).parent
 CONFIG_F   = ROOT / "config.json"
-PDF_DIR    = Path.home() / "Downloads" / "UFO-Release-01" / "pdfs"
-MD_DIR     = Path.home() / "Downloads" / "UFO-Release-01" / "markdown"
+PDF_DIR    = ROOT / "data" / "pdfs"
+MD_DIR     = ROOT / "data" / "markdown"
 DB_DIR     = ROOT / ".chromadb"
 GRAPH_DB   = DB_DIR / "graph.db"
 COLLECTION = "uap_release1"

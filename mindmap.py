@@ -14,8 +14,8 @@ Commands:
 Env:
     LM_STUDIO_URL  — LM Studio base URL (default: http://localhost:1234/v1)
     LM_CHAT_MODEL  — model for extraction (default: auto-selects first loaded chat model)
-    UAP_MD_DIR     — markdown dir (default: ~/Downloads/UFO-Release-01/markdown)
-    UAP_DB_DIR     — DB dir (default: ~/Claude Projects/DOW_UFO_FILES/.chromadb)
+    UAP_MD_DIR     — markdown dir (default: <project>/data/markdown)
+    UAP_DB_DIR     — DB dir (default: <project>/.chromadb)
 """
 
 import argparse
@@ -27,11 +27,11 @@ import sys
 import webbrowser
 from pathlib import Path
 
-MD_DIR = Path(os.environ.get("UAP_MD_DIR", Path.home() / "Downloads" / "UFO-Release-01" / "markdown"))
+MD_DIR = Path(os.environ.get("UAP_MD_DIR", Path(__file__).parent / "data" / "markdown"))
 DB_PATH = Path(os.environ.get("UAP_DB_DIR", Path(__file__).parent / ".chromadb")) / "graph.db"
 OUT_DIR = Path(__file__).parent / "visualizations"
 
-LM_BASE_URL  = os.environ.get("LM_STUDIO_URL", "http://192.168.1.171:1234/v1")
+LM_BASE_URL  = os.environ.get("LM_STUDIO_URL", "http://localhost:1234/v1")
 LM_CHAT_MODEL = os.environ.get("LM_CHAT_MODEL", "qwen2.5-7b-instruct-1m")
 
 EXTRACT_PROMPT = """You are analyzing a declassified U.S. government document about UAP/UFOs.

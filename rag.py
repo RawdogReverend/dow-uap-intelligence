@@ -13,8 +13,8 @@ Env:
     ANTHROPIC_API_KEY  — required for query/chat
     LM_STUDIO_URL      — LM Studio base URL (default: http://localhost:1234/v1)
     EMBED_MODEL        — embedding model name loaded in LM Studio
-    UAP_MD_DIR         — markdown dir (default: ~/Downloads/UFO-Release-01/markdown)
-    UAP_DB_DIR         — chroma DB dir (default: ~/Claude Projects/DOW_UFO_FILES/.chromadb)
+    UAP_MD_DIR         — markdown dir (default: <project>/data/markdown)
+    UAP_DB_DIR         — chroma DB dir (default: <project>/.chromadb)
 """
 
 import argparse
@@ -23,7 +23,7 @@ import re
 import sys
 from pathlib import Path
 
-MD_DIR = Path(os.environ.get("UAP_MD_DIR", Path.home() / "Downloads" / "UFO-Release-01" / "markdown"))
+MD_DIR = Path(os.environ.get("UAP_MD_DIR", Path(__file__).parent / "data" / "markdown"))
 DB_DIR = Path(os.environ.get("UAP_DB_DIR", Path(__file__).parent / ".chromadb"))
 
 COLLECTION   = "uap_release1"
@@ -35,7 +35,7 @@ TOP_K = 8
 # Embedding backend — one of: "lmstudio" | "ollama"
 EMBED_BACKEND = os.environ.get("EMBED_BACKEND", "lmstudio")
 EMBED_MODEL   = os.environ.get("EMBED_MODEL",   "text-embedding-nomic-embed-text-v1.5")
-LM_BASE_URL   = os.environ.get("LM_STUDIO_URL", "http://192.168.1.171:1234/v1")
+LM_BASE_URL   = os.environ.get("LM_STUDIO_URL", "http://localhost:1234/v1")
 OLLAMA_URL    = os.environ.get("OLLAMA_URL",    "http://localhost:11434")
 
 
