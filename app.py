@@ -189,9 +189,22 @@ def setup():
 
 @app.route("/api/models")
 def get_models():
-    from openai import OpenAI
+    import urllib.request
     url = request.args.get("url", "http://localhost:1234/v1")
     try:
+        # Ollama's /v1/models only lists loaded models; /api/tags lists everything pulled
+        base = url.rstrip("/").removesuffix("/v1")
+        tags_url = base + "/api/tags"
+        try:
+            with urllib.request.urlopen(tags_url, timeout=4) as r:
+                data = json.loads(r.read())
+            if "models" in data:
+                models = [m["name"] for m in data["models"]]
+                return jsonify({"models": models})
+        except Exception:
+            pass
+        # Fallback: OpenAI-compatible endpoint (LM Studio / running Ollama models)
+        from openai import OpenAI
         models = [m.id for m in OpenAI(base_url=url, api_key="lm-studio").models.list().data]
         return jsonify({"models": models})
     except Exception as e:
