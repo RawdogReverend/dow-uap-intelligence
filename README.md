@@ -15,63 +15,51 @@ Runs entirely on your machine — no cloud APIs required. Uses [LM Studio](https
 
 ---
 
+## Quick Start
+
+```bash
+# 1. Clone
+git clone https://github.com/RawdogReverend/dow-uap-intelligence.git
+cd dow-uap-intelligence
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Run
+python3 app.py
+```
+
+That's it. Open `http://localhost:7070` and the built-in **Settings** panel walks you through the rest — connecting to LM Studio, downloading the documents, running OCR, indexing, and entity extraction all from inside the app.
+
+---
+
 ## Requirements
 
 - Python 3.11+
 - [LM Studio](https://lmstudio.ai) running locally with:
   - An **embedding model** loaded (e.g. `nomic-embed-text`)
   - A **chat model** loaded (e.g. `qwen2.5-7b-instruct`)
-- [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) — for scanned PDFs
-
-Install Python dependencies:
-
-```bash
-pip install -r requirements.txt
-```
+- [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) — for scanned PDFs (most documents have a text layer, so this is usually optional)
 
 ---
 
-## Setup
+## Manual Pipeline (CLI alternative)
 
-### 1. Download the documents
+The app handles everything via its UI, but you can also run each step from the command line:
 
 ```bash
+# Download the documents (~133 PDFs)
 python3 download-ufo-release1.py
-```
 
-Downloads ~133 PDFs and images into `data/pdfs/`.
-
-### 2. Convert PDFs to Markdown
-
-```bash
+# Convert PDFs to Markdown
 python3 pdf_to_md.py
-```
 
-Uses `pymupdf4llm` for text-layer PDFs and Tesseract OCR as fallback. Output goes to `data/markdown/`.
-
-### 3. Index for search (RAG)
-
-Start LM Studio with an embedding model loaded, then:
-
-```bash
+# Index for RAG search (requires embedding model in LM Studio)
 python3 rag.py index
-```
 
-### 4. Extract entities (optional — for Mind Map)
-
-```bash
+# Extract entities for Mind Map (optional, takes a while)
 python3 mindmap.py extract
 ```
-
-Requires a chat model loaded in LM Studio. This step can take a while.
-
-### 5. Run the app
-
-```bash
-python3 app.py
-```
-
-Opens at `http://localhost:7070`.
 
 ---
 
@@ -93,14 +81,14 @@ Environment variable overrides:
 ## Project Structure
 
 ```
-app.py                  # Flask web server + API routes
-ui.html                 # Single-file frontend
-rag.py                  # Vector indexing and retrieval
-mindmap.py              # Entity extraction and knowledge graph
-pdf_to_md.py            # PDF → Markdown conversion
-download-ufo-release1.py # Document downloader
+app.py                    # Flask web server + API routes
+ui.html                   # Single-file frontend
+rag.py                    # Vector indexing and retrieval
+mindmap.py                # Entity extraction and knowledge graph
+pdf_to_md.py              # PDF → Markdown conversion
+download-ufo-release1.py  # Document downloader
 data/
-  pdfs/                 # Downloaded PDFs (gitignored)
-  markdown/             # Converted markdown (gitignored)
-.chromadb/              # Vector DB + graph DB (gitignored)
+  pdfs/                   # Downloaded PDFs (gitignored)
+  markdown/               # Converted markdown (gitignored)
+.chromadb/                # Vector DB + graph DB (gitignored)
 ```
