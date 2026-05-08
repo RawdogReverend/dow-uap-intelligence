@@ -4,8 +4,6 @@ A local web app for exploring the **161 declassified UAP/UFO documents** release
 
 Runs entirely on your machine — no cloud APIs required. Uses [LM Studio](https://lmstudio.ai) for embeddings and chat inference.
 
-![Chat interface with RAG-grounded answers, mind map, entity lookup, and document reader](.github/screenshot.png)
-
 ---
 
 ## Features
