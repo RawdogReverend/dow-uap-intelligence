@@ -213,8 +213,11 @@ def run_pipeline(step):
     if step not in STEPS:
         return jsonify({"error": "unknown step"}), 400
     def gen():
+        env = os.environ.copy()
+        env["LM_STUDIO_URL"] = cfg("lm_base_url", "http://localhost:1234/v1")
+        env["EMBED_MODEL"]   = cfg("embed_model", "")
         proc = subprocess.Popen(STEPS[step], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                text=True, bufsize=1, cwd=str(ROOT))
+                                text=True, bufsize=1, cwd=str(ROOT), env=env)
         for line in proc.stdout:
             yield sse({"line": line.rstrip()})
         proc.wait()
