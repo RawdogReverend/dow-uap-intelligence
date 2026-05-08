@@ -31,7 +31,8 @@ MD_DIR = Path(os.environ.get("UAP_MD_DIR", Path(__file__).parent / "data" / "mar
 DB_PATH = Path(os.environ.get("UAP_DB_DIR", Path(__file__).parent / ".chromadb")) / "graph.db"
 OUT_DIR = Path(__file__).parent / "visualizations"
 
-LM_BASE_URL  = os.environ.get("LM_STUDIO_URL", "http://localhost:1234/v1")
+LM_BASE_URL   = os.environ.get("LM_STUDIO_URL", "http://localhost:1234/v1")
+LM_API_KEY    = os.environ.get("LM_API_KEY",    "lm-studio")
 LM_CHAT_MODEL = os.environ.get("LM_CHAT_MODEL", "qwen2.5-7b-instruct-1m")
 
 EXTRACT_PROMPT = """You are analyzing a declassified U.S. government document about UAP/UFOs.
@@ -139,7 +140,7 @@ def extract_entities(text: str, source: str, client, model: str) -> dict:
 
 def cmd_extract(args):
     from openai import OpenAI
-    client = OpenAI(base_url=LM_BASE_URL, api_key="lm-studio")
+    client = OpenAI(base_url=LM_BASE_URL, api_key=LM_API_KEY)
     model = get_chat_model(client)
     print(f"Using model: {model}\n")
     conn = get_db()

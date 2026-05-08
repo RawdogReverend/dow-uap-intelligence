@@ -57,7 +57,7 @@ def cfg(key, default=""):
 
 def lm():
     from openai import OpenAI
-    return OpenAI(base_url=cfg("lm_base_url", "http://localhost:1234/v1"), api_key="lm-studio")
+    return OpenAI(base_url=cfg("lm_base_url", "http://localhost:1234/v1"), api_key=cfg("api_key", "lm-studio"))
 
 def embed(texts):
     resp = lm().embeddings.create(model=cfg("embed_model"), input=texts)
@@ -191,8 +191,9 @@ def setup():
 def get_models():
     import urllib.request
     url = request.args.get("url", "http://localhost:1234/v1")
+    key = request.args.get("key", "lm-studio")
     try:
-        # Ollama's /v1/models only lists loaded models; /api/tags lists everything pulled
+        # Ollama: /api/tags lists all pulled models (more complete than /v1/models)
         base = url.rstrip("/").removesuffix("/v1")
         tags_url = base + "/api/tags"
         try:
@@ -203,9 +204,9 @@ def get_models():
                 return jsonify({"models": models})
         except Exception:
             pass
-        # Fallback: OpenAI-compatible endpoint (LM Studio / running Ollama models)
+        # LM Studio / OpenAI: OpenAI-compatible models list
         from openai import OpenAI
-        models = [m.id for m in OpenAI(base_url=url, api_key="lm-studio").models.list().data]
+        models = [m.id for m in OpenAI(base_url=url, api_key=key).models.list().data]
         return jsonify({"models": models})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -228,6 +229,7 @@ def run_pipeline(step):
     def gen():
         env = os.environ.copy()
         env["LM_STUDIO_URL"] = cfg("lm_base_url", "http://localhost:1234/v1")
+        env["LM_API_KEY"]    = cfg("api_key", "lm-studio")
         env["EMBED_MODEL"]   = cfg("embed_model", "")
         proc = subprocess.Popen(STEPS[step], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                 text=True, bufsize=1, cwd=str(ROOT), env=env)

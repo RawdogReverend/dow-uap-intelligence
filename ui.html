@@ -450,9 +450,14 @@ mark.hl{background:rgba(255,184,0,.2);border-radius:2px;padding:0 2px;color:inhe
           <div style="display:flex;gap:8px;margin-bottom:2px">
             <button id="btn-lms" class="btn btn-sm btn-ac" onclick="setBackend('lmstudio')">LM Studio</button>
             <button id="btn-ollama" class="btn btn-sm btn-rim" onclick="setBackend('ollama')">Ollama</button>
+            <button id="btn-openai" class="btn btn-sm btn-rim" onclick="setBackend('openai')">OpenAI</button>
           </div>
         </div>
         <input type="hidden" id="backend" value="lmstudio">
+        <div class="field" id="apikey-field" style="display:none">
+          <label>API Key</label>
+          <input id="api-key" type="password" placeholder="sk-...">
+        </div>
         <div class="field">
           <label id="url-label">Endpoint</label>
           <div class="irow">
@@ -691,10 +696,14 @@ let hist=[],docs=[],types=new Set(Object.keys(C)),inSettings=false;
 
 function setBackend(b){
   document.getElementById('backend').value=b;
-  const isOllama=b==='ollama';
-  document.getElementById('lm-url').value=isOllama?'http://localhost:11434/v1':'http://localhost:1234/v1';
-  document.getElementById('btn-lms').className='btn btn-sm '+(isOllama?'btn-rim':'btn-ac');
-  document.getElementById('btn-ollama').className='btn btn-sm '+(isOllama?'btn-ac':'btn-rim');
+  const urls={lmstudio:'http://localhost:1234/v1',ollama:'http://localhost:11434/v1',openai:'https://api.openai.com/v1'};
+  document.getElementById('lm-url').value=urls[b]||'';
+  ['lms','ollama','openai'].forEach(k=>{
+    const id='btn-'+(k==='lms'?'lms':k);
+    const active=(k==='lms'&&b==='lmstudio')||(k===b);
+    document.getElementById(id).className='btn btn-sm '+(active?'btn-ac':'btn-rim');
+  });
+  document.getElementById('apikey-field').style.display=b==='openai'?'block':'none';
   document.getElementById('mselects').style.display='none';
   document.getElementById('cmsg').textContent='';
   document.getElementById('cmsg').className='cmsg';
@@ -705,7 +714,8 @@ async function doConnect(){
   const m=document.getElementById('cmsg');
   m.textContent='Connecting…';m.className='cmsg';
   try{
-    const d=await(await fetch('/api/models?url='+encodeURIComponent(url))).json();
+    const key=document.getElementById('api-key').value.trim();
+    const d=await(await fetch('/api/models?url='+encodeURIComponent(url)+(key?'&key='+encodeURIComponent(key):''))).json();
     if(d.error){m.textContent='Error: '+d.error;m.className='cmsg err';return;}
     m.textContent=`✓ ${d.models.length} models found`;m.className='cmsg ok';
     const fill=(id,pref,saved)=>{
@@ -724,6 +734,7 @@ async function doSave(){
     body:JSON.stringify({
       backend:document.getElementById('backend').value,
       lm_base_url:document.getElementById('lm-url').value.trim(),
+      api_key:document.getElementById('api-key').value.trim()||undefined,
       embed_model:document.getElementById('embed-model').value,
       chat_model:document.getElementById('chat-model').value,
       temperature:parseFloat(document.getElementById('temperature').value),
@@ -774,6 +785,7 @@ function showSetup(){
     if(c.lm_base_url){
       if(c.backend)setBackend(c.backend);
       document.getElementById('lm-url').value=c.lm_base_url;
+      if(c.api_key)document.getElementById('api-key').value=c.api_key;
       if(c.temperature!=null){document.getElementById('temperature').value=c.temperature;document.getElementById('temp-val').textContent=parseFloat(c.temperature).toFixed(2);}
       if(c.max_tokens!=null)document.getElementById('max-tokens').value=c.max_tokens;
       if(c.min_rag_score!=null){document.getElementById('min-rag-score').value=c.min_rag_score;document.getElementById('mrs-val').textContent=parseFloat(c.min_rag_score).toFixed(2);}

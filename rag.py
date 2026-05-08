@@ -36,6 +36,7 @@ TOP_K = 8
 EMBED_BACKEND = os.environ.get("EMBED_BACKEND", "lmstudio")
 EMBED_MODEL   = os.environ.get("EMBED_MODEL",   "text-embedding-nomic-embed-text-v1.5")
 LM_BASE_URL   = os.environ.get("LM_STUDIO_URL", "http://localhost:1234/v1")
+LM_API_KEY    = os.environ.get("LM_API_KEY",    "lm-studio")
 OLLAMA_URL    = os.environ.get("OLLAMA_URL",    "http://localhost:11434")
 
 
@@ -77,7 +78,7 @@ def embed(texts: list[str]) -> list[list[float]]:
 
 def _embed_lmstudio(texts: list[str]) -> list[list[float]]:
     from openai import OpenAI
-    client = OpenAI(base_url=LM_BASE_URL, api_key="lm-studio")
+    client = OpenAI(base_url=LM_BASE_URL, api_key=LM_API_KEY)
     results = []
     batch_size = 16
     for i in range(0, len(texts), batch_size):
@@ -251,7 +252,7 @@ def ask(query: str, history: list[dict] | None = None) -> str:
         "content": f"<documents>\n{context}\n</documents>\n\nQuestion: {query}",
     })
 
-    client = OpenAI(base_url=LM_BASE_URL, api_key="lm-studio")
+    client = OpenAI(base_url=LM_BASE_URL, api_key=LM_API_KEY)
     model = get_chat_model(client)
     response = client.chat.completions.create(
         model=model,
