@@ -726,7 +726,8 @@ async function doConnect(){
     fill('embed-model','embed',cfg.embed_model);
     fill('chat-model','instruct',cfg.chat_model);
     document.getElementById('mselects').style.display='block';
-  }catch(e){m.textContent='Cannot reach LM Studio: '+e.message;m.className='cmsg err';}
+    doSave();
+  }catch(e){m.textContent='Cannot reach '+url+': '+e.message;m.className='cmsg err';}
 }
 
 async function doSave(){
